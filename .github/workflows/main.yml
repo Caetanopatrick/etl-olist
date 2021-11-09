@@ -40,7 +40,7 @@ jobs:
       - name: Download python script from build
         uses: actions/download-artifact@v2
         with:
-          name: script_csv_to_parquet.py
+          name: etl-olist/etl/script_csv_to_parquet.py
 
       # Install the AWS CLI
       - name: Install AWS CLI
