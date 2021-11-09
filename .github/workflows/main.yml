@@ -1,38 +1,38 @@
 name: build-and-deploy
 
-# Controls when the action will run. Triggers the workflow on push
-# but only for the master branch.
+# Controla quanda a ação será executada. Da trigger no workflow na hora od push, mas só para o branch master.
+
 on:
   push:
     branches: [ master ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# Uma run de workflow é feita de um ou mais jobs que podem rodar sequencialmente ou em paralelo.
 jobs:
-  # This workflow contains two jobs called "build" and "deploy"
+  # Esse workflow contem o build e o deploy.
   build:
-    # The type of runner that the job will run on
+    # Onde o job vai rodar
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    # As etapas representam uma sequência de tarefas que serão executadas como parte do job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Verifica o repositório em $ GITHUB_WORKSPACE, para que o job possa acessá-lo
       - uses: actions/checkout@v2
 
-      # Set up Python
+      # Ativa o Python
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
 
 
-      # Persist python script for use between jobs
+      # Persiste o script python para usar entre os jobs.
       - name: Upload python script
         uses: actions/upload-artifact@v2
         with:
           name: script_csv_to_parquet.py
           path: etl/script_csv_to_parquet.py
 
-  # Upload python script to S3 and update Glue job
+  # Da upload do script python no s3 e atualiza o glue job.
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -42,14 +42,14 @@ jobs:
         with:
           name: script_csv_to_parquet.py
 
-      # Install the AWS CLI
+      # Instala a AWS CLI
       - name: Install AWS CLI
         run: |
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
           sudo ./aws/install --update
 
-      # Set up credentials used by AWS CLI
+      # Configura as credenciais da AWS
       - name: Set up AWS credentials
         shell: bash
         env:
@@ -62,17 +62,17 @@ jobs:
           aws_access_key_id = $AWS_ACCESS_KEY_ID
           aws_secret_access_key = $AWS_SECRET_ACCESS_KEY" > ~/.aws/credentials
 
-      # Copy the file to the S3 bucket
+      # Copia o arquivo para o bucket do s3
       - name: Upload to S3
         run: aws s3 cp script_csv_to_parquet.py s3://${{secrets.S3_BUCKET}}/root/csv_to_parquet --region us-east-1
 
-      # Update the Glue job to use the new script
+      # Atualiza o glue job para rodar o novo script
       - name: Update Glue job
         run: |
           aws glue update-job --job-name "ETLCsvToParquet" --job-update \
             "Role=MyDefaultGlueServiceRole,Command={Name=glueetl,ScriptLocation=s3://${{secrets.S3_BUCKET}}/root/csv_to_parquet}" \
             --region us-east-1
 
-      # Remove stored credentials file
+      # Remove o arquivo de credenciais
       - name: Cleanup
         run: rm -rf ~/.aws
