@@ -64,13 +64,13 @@ jobs:
 
       # Copy the file to the S3 bucket
       - name: Upload to S3
-        run: aws s3 cp script_csv_to_parquet.py s3://${{secrets.S3_BUCKET}}/ --region us-east-1
+        run: aws s3 cp script_csv_to_parquet.py s3://${{secrets.S3_BUCKET}}/root/csv_to_parquet --region us-east-1
 
       # Update the Glue job to use the new script
       - name: Update Glue job
         run: |
           aws glue update-job --job-name "ETLCsvToParquet" --job-update \
-            "Role=MyDefaultGlueServiceRole,Command={Name=glueetl,ScriptLocation=s3://${{secrets.S3_BUCKET}}/}" \
+            "Role=MyDefaultGlueServiceRole,Command={Name=glueetl,ScriptLocation=s3://${{secrets.S3_BUCKET}}/root/csv_to_parquet}" \
             --region us-east-1
 
       # Remove stored credentials file
