@@ -19,16 +19,18 @@ Venda por cliente, cidade do cliente e estado
 
 """
 
+dev_or_prod = "dev"
+
 
 conn = connect(S3OutputLocation='s3://athena-queries-patrick/',
                AwsRegion='us-east-1')
 print("Valor total das vendas e dos fretes por vendedor")
 
-query = """
+query = f"""
 SELECT seller_id,
     sum(order_item_id * price) as total_das_vendas,
 	sum(freight_value) as total_frete
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 GROUP BY seller_id;
             """
 
@@ -38,11 +40,11 @@ print(df)
 
 print("Valor total das vendas e dos fretes por produto")
 
-query = """
+query = f"""
 SELECT product_id,
 	sum(order_item_id * price) as total_das_vendas,
 	sum(freight_value) as total_frete
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 GROUP BY product_id;
 """
 
@@ -52,11 +54,11 @@ print(df)
 
 print("Valor total das vendas e dos fretes por ordem de venda")
 
-query = """
+query = f"""
 SELECT order_id,
 	sum(order_item_id * price) as total_das_vendas,
 	sum(freight_value) as total_frete
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 GROUP BY order_id;
 """
 
@@ -65,11 +67,11 @@ df = pd.read_sql(query, conn)
 print(df)
 
 print("Valor de venda por tipo de pagamento")
-query = """
+query = f"""
 SELECT payment_type,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_order_payments_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_order_payments_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_order_payments_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_order_payments_dataset_parquet".order_id
 GROUP BY payment_type;
 """
 df = pd.read_sql(query, conn)
@@ -78,11 +80,11 @@ print(df)
 
 print("Média das notas de cada produto")
 
-query = """
+query = f"""
 SELECT product_id,
 	avg(review_score) as media_reviews
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_order_reviews_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_order_reviews_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet".order_id
 GROUP BY product_id;
 """
 
@@ -92,11 +94,11 @@ print(df)
 
 print("Média das notas de cada vendedor")
 
-query = """
+query = f"""
 SELECT seller_id,
 	avg(review_score) as media_reviews
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_order_reviews_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_order_reviews_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet".order_id
 GROUP BY seller_id;
 """
 df = pd.read_sql(query, conn)
@@ -105,11 +107,11 @@ print(df)
 
 print("Venda por cliente")
 
-query = """
+query = f"""
 SELECT customer_id,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_orders_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 GROUP BY customer_id;
 """
 
@@ -119,11 +121,11 @@ print(df)
 
 print("Venda por status de envio")
 
-query = """
+query = f"""
 SELECT order_status,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_orders_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 GROUP BY order_status;
 """
 df = pd.read_sql(query, conn)
@@ -132,12 +134,12 @@ print(df)
 
 print("Quantidade e valor das vendas aprovadas por dia...")
 
-query = """
+query = f"""
 SELECT DATE(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s')) as dia,
     sum(order_item_id) as quantidade,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_orders_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 WHERE order_status = 'approved'
 GROUP BY DATE(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
 ORDER BY DATE(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
@@ -148,12 +150,12 @@ print(df)
 
 print("Quantidade e valor das vendas aprovadas por mês..")
 
-query = """
+query = f"""
 SELECT MONTH(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s')) as mes,
     sum(order_item_id) as quantidade,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_orders_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 WHERE order_status = 'approved'
 GROUP BY MONTH(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
 ORDER BY MONTH(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
@@ -164,12 +166,12 @@ print(df)
 
 print("Quantidade e valor das vendas aprovadas por ano..")
 
-query = """
+query = f"""
 SELECT YEAR(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s')) as ano,
     sum(order_item_id) as quantidade,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_orders_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 WHERE order_status = 'approved'
 GROUP BY YEAR(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
 ORDER BY YEAR(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
@@ -180,12 +182,12 @@ print(df)
 
 print("Quantidade e valor das vendas emitidas por dia...")
 
-query = """
+query = f"""
 SELECT DATE(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s')) as dia,
     sum(order_item_id) as quantidade,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_orders_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 WHERE order_status = 'invoiced'
 GROUP BY DATE(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
 ORDER BY DATE(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
@@ -197,12 +199,12 @@ print(df)
 
 print("Quantidade e valor das vendas emitidas por mês..")
 
-query = """
+query = f"""
 SELECT MONTH(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s')) as mes,
     sum(order_item_id) as quantidade,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_orders_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 WHERE order_status = 'invoiced'
 GROUP BY MONTH(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
 ORDER BY MONTH(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
@@ -215,12 +217,12 @@ print(df)
 
 print("Quantidade e valor das vendas emitidas por ano..")
 
-query = """
+query = f"""
 SELECT YEAR(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s')) as ano,
     sum(order_item_id) as quantidade,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_orders_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 WHERE order_status = 'invoiced'
 GROUP BY YEAR(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
 ORDER BY YEAR(date_parse(order_purchase_timestamp,'%Y-%m-%d %H:%i:%s'))
@@ -231,7 +233,7 @@ print(df)
 
 print("Tempo para aprovar um pedido")
 
-query = """
+query = f"""
 SELECT AVG(
 		TRY(date_diff(
 			'hour',
@@ -239,7 +241,7 @@ SELECT AVG(
 			date_parse(order_approved_at, '%Y-%m-%d %H:%i:%s')
 		))
 	) as tempo_aprovacao_horas
-FROM "olist_parquet"."olist_orders_dataset_parquet" 
+FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" 
 """
 df = pd.read_sql(query, conn)
 
@@ -247,7 +249,7 @@ print(df)
 
 print("Tempo para envio de um review após a venda")
 
-query = """
+query = f"""
 SELECT AVG(
 		TRY(date_diff(
 			'day',
@@ -255,8 +257,8 @@ SELECT AVG(
 			date_parse(review_creation_date, '%Y-%m-%d %H:%i:%s')
 		))
 	) as tempo_envio_review_dias
-FROM "olist_parquet"."olist_orders_dataset_parquet"
-	JOIN "olist_parquet"."olist_order_reviews_dataset_parquet" ON "olist_parquet"."olist_orders_dataset_parquet".order_id = "olist_parquet"."olist_order_reviews_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet".order_id
 """
 df = pd.read_sql(query, conn)
 
@@ -264,12 +266,12 @@ print(df)
 
 print("Venda por produto")
 
-query = """
-SELECT "olist_parquet"."olist_order_items_dataset_parquet".product_id,
+query = f"""
+SELECT "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".product_id,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_products_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".product_id = "olist_parquet"."olist_products_dataset_parquet".product_id
-GROUP BY "olist_parquet"."olist_order_items_dataset_parquet".product_id;
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".product_id = "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet".product_id
+GROUP BY "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".product_id;
 """
 df = pd.read_sql(query, conn)
 
@@ -277,11 +279,11 @@ print(df)
 
 print("Venda por tipo do produto")
 
-query = """
-SELECT "olist_parquet"."olist_products_dataset_parquet".product_category_name,
+query = f"""
+SELECT "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet".product_category_name,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-	JOIN "olist_parquet"."olist_products_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".product_id = "olist_parquet"."olist_products_dataset_parquet".product_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".product_id = "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet".product_id
 GROUP BY "olist_products_dataset_parquet".product_category_name;
 """
 df = pd.read_sql(query, conn)
@@ -290,10 +292,10 @@ print(df)
 
 print("Venda por vendedor")
 
-query = """
+query = f"""
 SELECT seller_id,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 GROUP BY seller_id;
 """
 
@@ -303,11 +305,11 @@ print(df)
 
 print("Venda por cidade do vendedor")
 
-query = """
+query = f"""
 SELECT seller_city, sum(order_item_id * price) total_das_vendas
-FROM "olist_parquet"."olist_order_items_dataset_parquet"
-JOIN "olist_parquet"."olist_sellers_dataset_parquet"
-ON "olist_parquet"."olist_order_items_dataset_parquet".seller_id = "olist_parquet"."olist_sellers_dataset_parquet".seller_id
+FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
+JOIN "olist_parquet_{dev_or_prod}"."olist_sellers_dataset_parquet"
+ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".seller_id = "olist_parquet_{dev_or_prod}"."olist_sellers_dataset_parquet".seller_id
 GROUP BY seller_city; """
 
 df = pd.read_sql(query, conn)
@@ -315,13 +317,13 @@ df = pd.read_sql(query, conn)
 print(df)
 
 print("Venda por cliente")
-query = """
-SELECT "olist_parquet"."olist_orders_dataset_parquet".customer_id,
+query = f"""
+SELECT "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_orders_dataset_parquet"
-	JOIN "olist_parquet"."olist_customers_dataset_parquet" ON "olist_parquet"."olist_orders_dataset_parquet".customer_id = "olist_parquet"."olist_customers_dataset_parquet".customer_id
-	JOIN "olist_parquet"."olist_order_items_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
-GROUP BY "olist_parquet"."olist_orders_dataset_parquet".customer_id;
+FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id = "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet".customer_id
+	JOIN "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
+GROUP BY "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id;
 """
 
 df = pd.read_sql(query, conn)
@@ -330,12 +332,12 @@ print(df)
 
 print("Venda por cidade do cliente")
 
-query = """
+query = f"""
 SELECT customer_city,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_orders_dataset_parquet"
-	JOIN "olist_parquet"."olist_customers_dataset_parquet" ON "olist_parquet"."olist_orders_dataset_parquet".customer_id = "olist_parquet"."olist_customers_dataset_parquet".customer_id
-	JOIN "olist_parquet"."olist_order_items_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id = "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet".customer_id
+	JOIN "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 GROUP BY customer_city;
 """
 df = pd.read_sql(query, conn)
@@ -344,12 +346,12 @@ print(df)
 
 print("Venda por estado do cliente")
 
-query = """
+query = f"""
 SELECT customer_state,
 	sum(order_item_id * price) as total_das_vendas
-FROM "olist_parquet"."olist_orders_dataset_parquet"
-	JOIN "olist_parquet"."olist_customers_dataset_parquet" ON "olist_parquet"."olist_orders_dataset_parquet".customer_id = "olist_parquet"."olist_customers_dataset_parquet".customer_id
-	JOIN "olist_parquet"."olist_order_items_dataset_parquet" ON "olist_parquet"."olist_order_items_dataset_parquet".order_id = "olist_parquet"."olist_orders_dataset_parquet".order_id
+FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet"
+	JOIN "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id = "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet".customer_id
+	JOIN "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
 GROUP BY customer_state;
 """
 
