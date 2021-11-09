@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: script_csv_to_parquet.py
-          path: etl-olist/etl/script_csv_to_parquet.py
+          path: /etl/script_csv_to_parquet.py
 
   # Upload python script to S3 and update Glue job
   deploy:
@@ -40,7 +40,7 @@ jobs:
       - name: Download python script from build
         uses: actions/download-artifact@v2
         with:
-          name: etl-olist/etl/script_csv_to_parquet.py
+          name: script_csv_to_parquet.py
 
       # Install the AWS CLI
       - name: Install AWS CLI
