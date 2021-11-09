@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: script_csv_to_parquet.py
-          path: /etl/script_csv_to_parquet.py
+          path: script_csv_to_parquet.py
 
   # Upload python script to S3 and update Glue job
   deploy:
