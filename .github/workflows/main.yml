@@ -64,7 +64,7 @@ jobs:
 
       # Copy the file to the S3 bucket
       - name: Upload to S3
-        run: aws s3 cp script_csv_to_parquet.py s3://${{secrets.S3_BUCKET}}/${GITHUB_SHA} --region us-east-1
+        run: aws s3 cp script_csv_to_parquet.py s3://${{secrets.S3_BUCKET}}/ --region us-east-1
 
       # Update the Glue job to use the new script
       - name: Update Glue job
