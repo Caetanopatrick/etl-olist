@@ -70,7 +70,7 @@ jobs:
       - name: Update Glue job
         run: |
           aws glue update-job --job-name "ETLCsvToParquet" --job-update \
-            "Role=MyDefaultGlueServiceRole-TrafficCrawler,Command={Name=glueetl,ScriptLocation=s3://${{secrets.S3_BUCKET}}/${GITHUB_SHA}}" \
+            "Role=MyDefaultGlueServiceRole,Command={Name=glueetl,ScriptLocation=s3://${{secrets.S3_BUCKET}}/${GITHUB_SHA}}" \
             --region us-east-1
 
       # Remove stored credentials file
