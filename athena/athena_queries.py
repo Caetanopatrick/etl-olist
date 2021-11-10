@@ -43,7 +43,8 @@ SELECT seller_id,
     sum(order_item_id * price) as total_das_vendas,
 	sum(freight_value) as total_frete
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
-GROUP BY seller_id;
+GROUP BY seller_id
+ORDER BY total_das_vendas DESC;
             """
 
 
@@ -52,7 +53,8 @@ SELECT product_id,
 	sum(order_item_id * price) as total_das_vendas,
 	sum(freight_value) as total_frete
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
-GROUP BY product_id;
+GROUP BY product_id
+ORDER BY total_das_vendas DESC;
 """
 
 query_2 = f"""
@@ -60,7 +62,8 @@ SELECT order_id,
 	sum(order_item_id * price) as total_das_vendas,
 	sum(freight_value) as total_frete
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
-GROUP BY order_id;
+GROUP BY order_id
+ORDER BY total_das_vendas DESC;
 """
 
 query_3 = f"""
@@ -68,7 +71,8 @@ SELECT payment_type,
 	sum(order_item_id * price) as total_das_vendas
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_order_payments_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_order_payments_dataset_parquet".order_id
-GROUP BY payment_type;
+GROUP BY payment_type
+ORDER BY total_das_vendas DESC;
 """
 
 query_4 = f"""
@@ -76,7 +80,8 @@ SELECT product_id,
 	avg(review_score) as media_reviews
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet".order_id
-GROUP BY product_id;
+GROUP BY product_id
+ORDER BY media_reviews DESC;
 """
 
 query_5 = f"""
@@ -84,7 +89,8 @@ SELECT seller_id,
 	avg(review_score) as media_reviews
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet".order_id
-GROUP BY seller_id;
+GROUP BY seller_id
+ORDER BY media_reviews DESC;
 """
 
 query_6 = f"""
@@ -92,7 +98,8 @@ SELECT customer_id,
 	sum(order_item_id * price) as total_das_vendas
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
-GROUP BY customer_id;
+GROUP BY customer_id
+ORDER BY total_das_vendas DESC;
 """
 
 
@@ -101,7 +108,8 @@ SELECT order_status,
 	sum(order_item_id * price) as total_das_vendas
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
-GROUP BY order_status;
+GROUP BY order_status
+ORDER BY total_das_vendas DESC;
 """
 
 query_8 = f"""
@@ -178,7 +186,8 @@ SELECT AVG(
 			date_parse(order_approved_at, '%Y-%m-%d %H:%i:%s')
 		))
 	) as tempo_aprovacao_horas
-FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet" 
+FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet"
+ORDER BY tempo_aprovacao_horas DESC;
 """
 
 query_15 = f"""
@@ -191,13 +200,15 @@ SELECT AVG(
 	) as tempo_envio_review_dias
 FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_order_reviews_dataset_parquet".order_id
+ORDER BY tempo_envio_review_dias DESC;
 """
 query_16 = f"""
 SELECT "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".product_id,
 	sum(order_item_id * price) as total_das_vendas
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".product_id = "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet".product_id
-GROUP BY "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".product_id;
+GROUP BY "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".product_id
+ORDER BY total_das_vendas DESC;
 """
 
 query_17 = f"""
@@ -205,14 +216,16 @@ SELECT "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet".product_ca
 	sum(order_item_id * price) as total_das_vendas
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".product_id = "olist_parquet_{dev_or_prod}"."olist_products_dataset_parquet".product_id
-GROUP BY "olist_products_dataset_parquet".product_category_name;
+GROUP BY "olist_products_dataset_parquet".product_category_name
+ORDER BY total_das_vendas DESC;
 """
 
 query_18 = f"""
 SELECT seller_id,
 	sum(order_item_id * price) as total_das_vendas
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
-GROUP BY seller_id;
+GROUP BY seller_id
+ORDER BY total_das_vendas DESC;
 """
 
 query_19 = f"""
@@ -220,7 +233,9 @@ SELECT seller_city, sum(order_item_id * price) total_das_vendas
 FROM "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet"
 JOIN "olist_parquet_{dev_or_prod}"."olist_sellers_dataset_parquet"
 ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".seller_id = "olist_parquet_{dev_or_prod}"."olist_sellers_dataset_parquet".seller_id
-GROUP BY seller_city; """
+GROUP BY seller_city
+ORDER BY total_das_vendas DESC;
+"""
 
 query_20 = f"""
 SELECT "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id,
@@ -228,7 +243,8 @@ SELECT "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id,
 FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id = "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet".customer_id
 	JOIN "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
-GROUP BY "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id;
+GROUP BY "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id
+ORDER BY total_das_vendas DESC;
 """
 
 query_21 = f"""
@@ -237,7 +253,8 @@ SELECT customer_city,
 FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id = "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet".customer_id
 	JOIN "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
-GROUP BY customer_city;
+GROUP BY customer_city
+ORDER BY total_das_vendas DESC;
 """
 
 query_22 = f"""
@@ -246,7 +263,8 @@ SELECT customer_state,
 FROM "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet"
 	JOIN "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".customer_id = "olist_parquet_{dev_or_prod}"."olist_customers_dataset_parquet".customer_id
 	JOIN "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet" ON "olist_parquet_{dev_or_prod}"."olist_order_items_dataset_parquet".order_id = "olist_parquet_{dev_or_prod}"."olist_orders_dataset_parquet".order_id
-GROUP BY customer_state;
+GROUP BY customer_state
+ORDER BY total_das_vendas DESC;
 """
 
 queries =[query_0, query_1, query_2, query_3, query_4, query_5, query_6, query_7, query_8, query_9,
