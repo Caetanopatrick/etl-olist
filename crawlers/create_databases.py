@@ -9,7 +9,7 @@ O código abaixo cria os databases no glue catalog que irão ser utilizados para
 client = boto3.client('glue')
 
 response = client.create_database(
-    DatabaseInput={'Name':'olist_cdv'}
+    DatabaseInput={'Name':'olist_csv'}
 )
 print(json.dumps(response, indent=4, sort_keys=True, default=str))
 
