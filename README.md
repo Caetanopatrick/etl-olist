@@ -35,4 +35,3 @@ athena_queries.py: responde as perguntas impostas no desafio através de queries
 
 Implementado ciclo básico de CI/CD que altera o script ETL com cada novo commit.
 
-```
